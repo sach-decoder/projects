@@ -2,6 +2,11 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import os 
+
+print("Current working dir:", os.getcwd())
+print("Files here:", os.listdir("."))
+print("Parent files:", os.listdir(".."))
 
 df = pd.read_csv("../transformed_company_data.csv")
 df = df.drop(columns=['Company Path'])
