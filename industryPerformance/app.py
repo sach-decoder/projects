@@ -7,7 +7,7 @@ st.set_page_config(page_title="Company Dashboard", layout="wide")
 
 st.title("Company Analytics Dashboard")
 
-df = pd.read_csv(r"C:\Users\sachi\OneDrive\temp\transformed_company_data.csv")
+df = pd.read_csv("transformed_company_data.csv")
 if 'Company Path' in df.columns:
     df = df.drop(columns=['Company Path'])
 
