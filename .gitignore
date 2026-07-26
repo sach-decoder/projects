@@ -1,0 +1,6 @@
+*
+!.gitignore
+!industryPerformance/
+!customerChurn/
+!detection_model/
+
