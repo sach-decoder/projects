@@ -3,4 +3,6 @@
 !industryPerformance/
 !customerChurn/
 !detection_model/
+detection_model/venv/ 
+
 
