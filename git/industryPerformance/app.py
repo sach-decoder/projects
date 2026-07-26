@@ -2,8 +2,10 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+from pathlib import Path 
 
-df = pd.read_csv("transformed_company_data.csv")
+csv_path = Path(__file__).parent / "transformed_company_data.csv"
+df = pd.read_csv(csv_path)
 df = df.drop(columns=['Company Path'])
 
 st.set_page_config(page_title="Company Dashboard", layout="wide")
