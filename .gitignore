@@ -1,6 +1,6 @@
-cat > .gitignore << 'EOF'
 node_modules/
 .venv/
+venv/
 industryPerformance/
 /requirements.txt
 __pycache__/
@@ -8,4 +8,3 @@ __pycache__/
 .vscode/
 .env
 *.pem
-EOF
