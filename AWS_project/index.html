@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload CSV</title>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+  <main class="page">
+    <section class="upload-card" aria-labelledby="upload-title">
+      <div class="upload-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 16V4"></path>
+          <path d="M7 9l5-5 5 5"></path>
+          <path d="M4 20h16"></path>
+        </svg>
+      </div>
+
+      <h1 id="upload-title">Upload CSV</h1>
+      <p class="description">Drag and drop your CSV file here</p>
+
+      <label class="drop-zone" for="csv-file">
+        <span class="drop-zone-text">Drop CSV file here</span>
+        <span class="or">or</span>
+        <span class="browse-button">Browse files</span>
+        <span class="file-hint">CSV files only · Max 10 MB</span>
+      </label>
+
+      <input
+        id="csv-file"
+        type="file"
+        accept=".csv,text/csv"
+        hidden
+      >
+
+      <div class="file-preview" id="file-preview" hidden>
+        <div class="file-info">
+          <div class="file-name" id="file-name"></div>
+          <div class="file-size" id="file-size"></div>
+        </div>
+
+        <button class="remove-button" id="remove-file" type="button" aria-label="Remove file">
+          ×
+        </button>
+      </div>
+
+      <button class="upload-button" id="upload-button" type="button" disabled>
+        Upload file
+      </button>
+    </section>
+  </main>
+
+  <script type="module">
+    // import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+    import { sendToBucket } from "./aws_logic.js";
+
+    const fileInput = document.getElementById("csv-file");
+    const dropZone = document.querySelector(".drop-zone");
+    const preview = document.getElementById("file-preview");
+    const fileName = document.getElementById("file-name");
+    const fileSize = document.getElementById("file-size");
+    const removeButton = document.getElementById("remove-file");
+    const uploadButton = document.getElementById("upload-button");
+
+    let selectedFile = null;
+
+    function handleFile(file) {
+      if (!file) return;
+
+      const isCSV =
+        file.type === "text/csv" ||
+        file.name.toLowerCase().endsWith(".csv");
+
+      const maxSize = 10 * 1024 * 1024;
+
+      if (!isCSV) {
+        alert("Please select a CSV file.");
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert("The file must be smaller than 1 MB.");
+        return;
+      }
+
+      selectedFile = file;
+
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+
+      preview.hidden = false;
+      uploadButton.disabled = false;
+      dropZone.classList.add("has-file");
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+      }
+
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    fileInput.addEventListener("change", () => {
+      handleFile(fileInput.files[0]);
+    });
+
+    ["dragenter", "dragover"].forEach(eventName => {
+      dropZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropZone.classList.add("dragging");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(eventName => {
+      dropZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropZone.classList.remove("dragging");
+      });
+    });
+
+    dropZone.addEventListener("drop", event => {
+      const file = event.dataTransfer.files[0];
+      handleFile(file);
+    });
+
+    removeButton.addEventListener("click", () => {
+      selectedFile = null;
+      fileInput.value = "";
+      preview.hidden = true;
+      uploadButton.disabled = true;
+      dropZone.classList.remove("has-file");
+    });
+
+    uploadButton.addEventListener("click", () => 
+        sendToBucket(fileInput.files[0], fileInput.files[0].namet));
+
+  </script>
+</body>
+<link rel="stylesheet" href="style.css">
+</html>
